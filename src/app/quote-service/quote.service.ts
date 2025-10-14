@@ -16,8 +16,15 @@ export class QuoteService {
     this.fetchAllQuotes();
   }
 
-  public fetchAllQuotes(){ // TODO: get all quotes instead of only the first page
-    this.http.get<IQuotesResponse>(`https://api.typegg.io/v1/quotes?perPage=${this.perPage}&status=any`).subscribe(quotesResponse => this.quotes.next(quotesResponse.quotes));
+  public fetchAllQuotes(){
+    this.http.get<IQuotesResponse>(`https://api.typegg.io/v1/quotes?perPage=${this.perPage}&status=any`).subscribe(quotesResponse =>
+      {
+        this.quotes.next(quotesResponse.quotes);
+        for (let page = quotesResponse.page + 1; page <= quotesResponse.totalPages; page++) {
+          this.http.get<IQuotesResponse>(`https://api.typegg.io/v1/quotes?page=${page}&perPage=${this.perPage}&status=any`).subscribe(r => this.quotes.next([...this.quotes.value, ...r.quotes]));
+        }
+      }
+    );
   }
 
   public get Quotes$() {

@@ -40,6 +40,7 @@ export class HomeComponent{
   }
 
   private createSvg(): void {
+    this.svg = null;
     this.svg = d3.select(this.el.nativeElement)
       .select('.scatterplot')
       .append('svg')
