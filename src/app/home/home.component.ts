@@ -31,7 +31,7 @@ export class HomeComponent{
     this.quoteService.Quotes$.subscribe(q =>
     {
       this.quotes = q;
-      this.drawScatterPlot(q.filter((quote: IQuote) => quote.ranked == this.is_ranked).map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty};}));
+      this.drawScatterPlot(q.filter((quote: IQuote) => quote.ranked == this.is_ranked).map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
     });
   }
 
@@ -49,7 +49,7 @@ export class HomeComponent{
       .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
   }
 
-  private drawScatterPlot(data: {x: number, y: number}[]): void {
+  private drawScatterPlot(data: {x: number, y: number, id: string, text: string}[]): void {
     const x_scale = d3.scaleLinear()
       .domain([0, Math.max(...data.map((point) => point.x)) + 500])
       .range([0, this.width]);
@@ -77,7 +77,7 @@ export class HomeComponent{
       .attr('fill', 'steelblue')
       .attr('opacity', 0.8)
 
-      .on("mouseover", function (event: MouseEvent, d: {x: number, y: number}) {
+      .on("mouseover", function (event: MouseEvent, d: {x: number, y: number, id: string, text: string}) {
         d3.select(event.currentTarget as SVGCircleElement)
           .transition()
           .duration(100)
@@ -85,20 +85,16 @@ export class HomeComponent{
           .attr("fill", "orange");
 
       tooltip.transition().duration(100).style("opacity", 1);
-      tooltip
-        .html(`<strong>Length:</strong> ${d.x}<br><strong>Difficulty:</strong> ${d.y}`)
-        .style("left", event.pageX + 10 + "px")
-        .style("top", event.pageY - 20 + "px");
+      tooltip.html(`<strong>Length:</strong> ${d.x}<br><strong>Difficulty:</strong> ${d.y}<br><strong>Quote Id:</strong> ${d.id}<br><strong>Text:</strong> ${d.text}`)
     })
 
-    .on("mouseout", function (event: MouseEvent, d: {x: number, y: number}) {
+    .on("mouseout", function (event: MouseEvent) {
         d3.select(event.currentTarget as SVGCircleElement)
         .transition()
         .duration(200)
         .attr("r", 2)
         .attr("fill", "steelblue");
 
-      // Hide tooltip
       tooltip.transition().duration(200).style("opacity", 0);
     });
   }
