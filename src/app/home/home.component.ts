@@ -31,6 +31,8 @@ export class HomeComponent{
     this.quoteService.Quotes$.subscribe(q =>
     {
       this.quotes = q;
+      this.clearSvg();
+      this.createSvg();
       this.drawScatterPlot(q.filter((quote: IQuote) => quote.ranked == this.is_ranked).map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
     });
   }
@@ -39,8 +41,11 @@ export class HomeComponent{
     return this.quotes;
   }
 
+  private clearSvg(): void{
+    d3.select(this.el.nativeElement).select('.scatterplot').select('svg').remove();
+  }
+
   private createSvg(): void {
-    this.svg = null;
     this.svg = d3.select(this.el.nativeElement)
       .select('.scatterplot')
       .append('svg')
