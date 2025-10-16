@@ -91,7 +91,8 @@ export class ExplorerComponent {
       .attr("data-status", "free")
       .on("mouseover", this.onMouseOver)
       .on("mouseout", this.onMouseOut)
-      .on("click", this.onMouseClick);
+      .on("click", this.onMouseClick)
+      .on("contextmenu", this.onRightClick);
 
   }
 
@@ -130,6 +131,12 @@ export class ExplorerComponent {
     d3.select(event.currentTarget as SVGCircleElement)
       .attr("fill", "red")
       .attr("data-status", "marked");
+  }
+
+  private onRightClick(event: MouseEvent, d: {x: number, y: number, id: string, text: string}){
+    event.preventDefault();
+
+    window.open(`https://www.typegg.io/solo/${d.id}`);
   }
 
   private set title(text: string){
