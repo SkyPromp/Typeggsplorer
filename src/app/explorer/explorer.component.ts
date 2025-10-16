@@ -12,7 +12,7 @@ import * as d3 from 'd3';
 export class ExplorerComponent {
   private quotes: IQuote[];
   private svg: any;
-  private margin = { top: -10, right: -10, bottom: 20, left: 20 };
+  private margin = { top: 40, right: -10, bottom: 40, left: 40 };
   private width = 600 - this.margin.left - this.margin.right;
   private height = 400 - this.margin.top - this.margin.bottom;
   public is_ranked;
@@ -26,13 +26,12 @@ export class ExplorerComponent {
   }
 
   ngOnInit(){
-    this.createSvg();
+    this.ResetSvg();
 
     this.quoteService.Quotes$.subscribe(q =>
     {
       this.quotes = q;
-      this.clearSvg();
-      this.createSvg();
+      this.ResetSvg();
       this.drawScatterPlot(q.filter((quote: IQuote) => quote.ranked == this.is_ranked).map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
     });
   }
@@ -43,6 +42,14 @@ export class ExplorerComponent {
 
   private clearSvg(): void{
     d3.select(this.el.nativeElement).select('.scatterplot').select('svg').remove();
+  }
+
+  private ResetSvg(): void{
+    this.clearSvg();
+    this.createSvg();
+    this.title = "Quote difficulty by length";
+    this.xlabel = "Quote length (in characters)";
+    this.ylabel = "Quote difficulty";
   }
 
   private createSvg(): void {
@@ -103,5 +110,44 @@ export class ExplorerComponent {
 
       tooltip.transition().duration(200).style("opacity", 0);
     });
+
+  }
+
+  private set title(text: string){
+    const fontsize = 24;
+
+    this.svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .style("font-size", `${fontsize}px`)
+        .attr("x", (this.width + text.length * fontsize / 2 + this.margin.right) / 2)
+        .attr("y", -20)
+        .text(text);
+  }
+
+  private set xlabel(text: string){
+    const fontsize = 16;
+
+    this.svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .style("font-size", `${fontsize}px`)
+        .attr("x", this.width - 20)
+        .attr("y", this.height + 35)
+        .text(text);
+  }
+
+  private set ylabel(text: string){
+    const fontsize = 16;
+
+    this.svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("x", -30)
+      .attr("y", -40)
+      .style("font-size", `${fontsize}px`)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text(text);
   }
 }
