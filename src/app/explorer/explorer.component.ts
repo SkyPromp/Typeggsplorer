@@ -78,7 +78,6 @@ export class ExplorerComponent {
     this.svg.append('g')
       .call(d3.axisLeft(y_scale));
 
-    const tooltip = d3.select("#tooltip");
 
     this.svg.append('g')
       .selectAll('circle')
@@ -89,28 +88,48 @@ export class ExplorerComponent {
       .attr('r', 2)
       .attr('fill', 'steelblue')
       .attr('opacity', 0.8)
+      .attr("data-status", "free")
+      .on("mouseover", this.onMouseOver)
+      .on("mouseout", this.onMouseOut)
+      .on("click", this.onMouseClick);
 
-      .on("mouseover", function (event: MouseEvent, d: {x: number, y: number, id: string, text: string}) {
-        d3.select(event.currentTarget as SVGCircleElement)
-          .transition()
-          .duration(100)
-          .attr("r", 8)
-          .attr("fill", "orange");
+  }
+
+  private onMouseOver(event: MouseEvent, d: {x: number, y: number, id: string, text: string}){
+    const tooltip = d3.select("#tooltip");
+
+    const target = d3.select(event.currentTarget as SVGCircleElement);
+    const color: string = target.attr("fill");
+
+    d3.select(event.currentTarget as SVGCircleElement)
+      .transition()
+      .duration(100)
+      .attr("r", 8)
+      .attr("fill", target.attr("data-status") == "free"? "orange": color);
 
       tooltip.transition().duration(100).style("opacity", 1);
       tooltip.html(`<strong>Length:</strong> ${d.x}<br><strong>Difficulty:</strong> ${d.y}<br><strong>Quote Id:</strong> ${d.id}<br><strong>Text:</strong> ${d.text}`)
-    })
+  }
 
-    .on("mouseout", function (event: MouseEvent) {
-        d3.select(event.currentTarget as SVGCircleElement)
-        .transition()
-        .duration(200)
-        .attr("r", 2)
-        .attr("fill", "steelblue");
+  private onMouseOut(event: MouseEvent){
+    const tooltip = d3.select("#tooltip");
 
-      tooltip.transition().duration(200).style("opacity", 0);
-    });
+    const target = d3.select(event.currentTarget as SVGCircleElement);
+    const color: string = target.attr("fill");
 
+    target
+      .transition()
+      .duration(200)
+      .attr("r", 2)
+      .attr("fill", target.attr("data-status") == "free"? "steelblue": color);
+
+    tooltip.transition().duration(200).style("opacity", 0);
+  }
+
+  private onMouseClick(event: MouseEvent){
+    d3.select(event.currentTarget as SVGCircleElement)
+      .attr("fill", "red")
+      .attr("data-status", "marked");
   }
 
   private set title(text: string){
