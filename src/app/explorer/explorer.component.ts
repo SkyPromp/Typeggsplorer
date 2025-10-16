@@ -128,9 +128,11 @@ export class ExplorerComponent {
   }
 
   private onMouseClick(event: MouseEvent){
+    const target = d3.select(event.currentTarget as SVGCircleElement);
+
     d3.select(event.currentTarget as SVGCircleElement)
-      .attr("fill", "red")
-      .attr("data-status", "marked");
+      .attr("fill", target.attr("data-status") == "marked"? "steelblue": "red")
+      .attr("data-status", target.attr("data-status") == "marked"? "free": "marked");
   }
 
   private onRightClick(event: MouseEvent, d: {x: number, y: number, id: string, text: string}){
