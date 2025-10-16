@@ -78,7 +78,6 @@ export class ExplorerComponent {
     this.svg.append('g')
       .call(d3.axisLeft(y_scale));
 
-
     this.svg.append('g')
       .selectAll('circle')
       .data(data)
@@ -93,7 +92,6 @@ export class ExplorerComponent {
       .on("mouseout", this.onMouseOut)
       .on("click", this.onMouseClick)
       .on("contextmenu", this.onRightClick);
-
   }
 
   private onMouseOver(event: MouseEvent, d: {x: number, y: number, id: string, text: string}){
@@ -109,7 +107,11 @@ export class ExplorerComponent {
       .attr("fill", target.attr("data-status") == "free"? "orange": color);
 
       tooltip.transition().duration(100).style("opacity", 1);
-      tooltip.html(`<strong>Length:</strong> ${d.x}<br><strong>Difficulty:</strong> ${d.y}<br><strong>Quote Id:</strong> ${d.id}<br><strong>Text:</strong> ${d.text}`)
+
+      d3.select("#tt_length").text(d.x);
+      d3.select("#tt_difficulty").text(d.y);
+      d3.select("#tt_id").text(d.id);
+      d3.select("#tt_text").text(d.text);
   }
 
   private onMouseOut(event: MouseEvent){
