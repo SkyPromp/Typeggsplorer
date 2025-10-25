@@ -1,7 +1,37 @@
-<div class="scatterplot position-relative"></div>
-<div id="tooltip" class="position-absolute">
-  <strong>Length: </strong><p id="tt_length"></p>
-  <strong>Difficulty: </strong><p id="tt_difficulty"></p>
-  <strong>Quote Id: </strong><p id="tt_id"></p>
-  <strong>Text: </strong><p id="tt_text" class="text-wrap overflow-auto col-8"></p>
+<div class="container">
+  <div class="row">
+    <div class="col-2">
+      <h3>Settings</h3>
+      <select (change)="refreshData()" [(ngModel)]="ranked_filter_option" class="form-select mb-2">
+        <option value="ranked">Ranked</option>
+        <option value="unranked">Unranked</option>
+        <option value="all">All</option>
+      </select>
+      <h3>How to use?</h3>
+      <b>Hover: </b><p>Display information about the quote</p>
+      <b>Left click: </b><p>(Un)mark the point in red</p>
+      <b>Right click: </b><p>Navigate to the quote</p>
+    </div>
+    <div class="col-8 d-flex justify-content-center">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="scatterplot position-relative"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div id="tooltip">
+              <strong>Length: </strong><p id="tt_length"></p>
+              <strong>Difficulty: </strong><p id="tt_difficulty"></p>
+              <strong>Quote Id: </strong><p id="tt_id"></p>
+              <strong>Text: </strong><p id="tt_text" class="text-wrap overflow-hidden"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-2"></div>
+  </div>
 </div>
+

@@ -1,11 +1,12 @@
 import { Component, ElementRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { QuoteService } from '../quote-service/quote.service';
 import { IQuote } from '../models/quote.model';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-explorer',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './explorer.component.html',
   styleUrl: './explorer.component.css'
 })
@@ -15,14 +16,13 @@ export class ExplorerComponent {
   private margin = { top: 40, right: -10, bottom: 40, left: 40 };
   private width = 600 - this.margin.left - this.margin.right;
   private height = 400 - this.margin.top - this.margin.bottom;
-  public is_ranked;
+  public ranked_filter_option: string = "ranked";
 
   constructor(
     private quoteService: QuoteService,
     private el: ElementRef
   ){
     this.quotes = [];
-    this.is_ranked = true;
   }
 
   ngOnInit(){
@@ -31,9 +31,21 @@ export class ExplorerComponent {
     this.quoteService.Quotes$.subscribe(q =>
     {
       this.quotes = q;
-      this.ResetSvg();
-      this.drawScatterPlot(q.filter((quote: IQuote) => quote.ranked == this.is_ranked).map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
+      this.refreshData();
     });
+  }
+
+  public refreshData(): void{
+    console.log(`rerender graph: ${this.ranked_filter_option}`);
+
+    this.ResetSvg();
+    this.drawScatterPlot(this.quotes
+      .filter((quote: IQuote) =>
+        ((this.ranked_filter_option == "ranked") && quote.ranked) ||
+        (this.ranked_filter_option == "unranked") && (!quote.ranked) ||
+        (this.ranked_filter_option != "ranked" && this.ranked_filter_option != "unranked")
+      )
+      .map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
   }
 
   public get Quotes(){
