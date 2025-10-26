@@ -1,5 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ValueChangeEvent } from '@angular/forms';
 import { QuoteService } from '../quote-service/quote.service';
 import { IQuote } from '../models/quote.model';
 import * as d3 from 'd3';
@@ -14,12 +14,13 @@ import { IRace } from '../models/race.model';
 })
 export class ExplorerComponent {
   private quotes: IQuote[];
-  private races: IRace[];
+  private raceIds: Set<string>;
   private svg: any;
   private margin = { top: 40, right: -10, bottom: 40, left: 40 };
   private width = 600 - this.margin.left - this.margin.right;
   private height = 400 - this.margin.top - this.margin.bottom;
   public ranked_filter_option: string = "ranked";
+  public user_filter_option: string = "all";
 
   constructor(
     private quoteService: QuoteService,
@@ -27,7 +28,7 @@ export class ExplorerComponent {
     private el: ElementRef
   ){
     this.quotes = [];
-    this.races = [];
+    this.raceIds = new Set();
   }
 
   ngOnInit(){
@@ -41,17 +42,18 @@ export class ExplorerComponent {
 
     this.raceService.Races$.subscribe(r =>
     {
-      this.races = r;
+      this.raceIds = new Set(r.map(race => race.quoteId));
       this.refreshData();
     });
   }
 
-  public requestUserData(event: InputEvent): void{
-    this.raceService.fetchAllRaces(event.data);
+  public requestUserData(event: Event): void{
+    this.raceService.fetchAllRaces((event.target as HTMLInputElement).value);
   }
 
   public refreshData(): void{
     console.log(`rerender graph: ${this.ranked_filter_option}`);
+    console.log(this.raceIds);
 
     this.ResetSvg();
     this.drawScatterPlot(this.quotes
@@ -59,6 +61,11 @@ export class ExplorerComponent {
         ((this.ranked_filter_option == "ranked") && quote.ranked) ||
         (this.ranked_filter_option == "unranked") && (!quote.ranked) ||
         (this.ranked_filter_option != "ranked" && this.ranked_filter_option != "unranked")
+      )
+      .filter((quote: IQuote) =>
+        ((this.user_filter_option == "played") && this.raceIds.has(quote.quoteId)) ||
+        (this.user_filter_option == "unplayed") && !this.raceIds.has(quote.quoteId) ||
+        (this.user_filter_option != "played" && this.user_filter_option != "unplayed")
       )
       .map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
   }

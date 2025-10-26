@@ -15,7 +15,13 @@ export class RaceService {
     this.races = new BehaviorSubject<IRace[]>([]);
   }
 
-  public fetchAllRaces(username: string): void{
+  public fetchAllRaces(username: string | null | undefined): void{
+    if (username == null || username == undefined) return;
+
+    username = username.trim();
+
+    if (username === "") return;
+
     const baseURL: string = `https://api.typegg.io/v1/users/${username}/races?perPage=${this.perPage}&status=any`;
 
     this.http.get<IRacesResponse>(baseURL).subscribe(racesResponse =>
