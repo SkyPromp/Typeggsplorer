@@ -7,7 +7,7 @@
         <option value="unranked">Unranked</option>
         <option value="all">All</option>
       </select>
-      <input type="text" (change)="requestUserData($event)" placeholder="Username" class="form-control" />
+      <input type="text" (change)="requestUserData($event)" placeholder="Username" class="form-control mb-2" />
       <select (change)="refreshData()" [(ngModel)]="user_filter_option" class="form-select mb-2">
         <option value="all">All</option>
         <option value="played">Played</option>
