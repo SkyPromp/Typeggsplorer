@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { IQuote, IQuotesResponse } from '../models/quote.model';
 
 @Injectable({
@@ -16,18 +16,20 @@ export class QuoteService {
     this.fetchAllQuotes();
   }
 
-  public fetchAllQuotes(){
-    this.http.get<IQuotesResponse>(`https://api.typegg.io/v1/quotes?perPage=${this.perPage}&status=any`).subscribe(quotesResponse =>
+  public fetchAllQuotes(): void{
+    const baseURL: string = `https://api.typegg.io/v1/quotes?perPage=${this.perPage}&status=any`;
+
+    this.http.get<IQuotesResponse>(baseURL).subscribe(quotesResponse =>
       {
         this.quotes.next(quotesResponse.quotes);
         for (let page = quotesResponse.page + 1; page <= quotesResponse.totalPages; page++) {
-          this.http.get<IQuotesResponse>(`https://api.typegg.io/v1/quotes?page=${page}&perPage=${this.perPage}&status=any`).subscribe(r => this.quotes.next([...this.quotes.value, ...r.quotes]));
+          this.http.get<IQuotesResponse>(`${baseURL}&page=${page}`).subscribe(r => this.quotes.next([...this.quotes.value, ...r.quotes]));
         }
       }
     );
   }
 
-  public get Quotes$() {
+  public get Quotes$(): Observable<IQuote[]> {
     return this.quotes.asObservable();
   }
 }

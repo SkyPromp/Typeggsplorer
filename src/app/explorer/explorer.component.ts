@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { QuoteService } from '../quote-service/quote.service';
 import { IQuote } from '../models/quote.model';
 import * as d3 from 'd3';
+import { RaceService } from '../race-service/race.service';
+import { IRace } from '../models/race.model';
 
 @Component({
   selector: 'app-explorer',
@@ -12,6 +14,7 @@ import * as d3 from 'd3';
 })
 export class ExplorerComponent {
   private quotes: IQuote[];
+  private races: IRace[];
   private svg: any;
   private margin = { top: 40, right: -10, bottom: 40, left: 40 };
   private width = 600 - this.margin.left - this.margin.right;
@@ -20,9 +23,11 @@ export class ExplorerComponent {
 
   constructor(
     private quoteService: QuoteService,
+    private raceService: RaceService,
     private el: ElementRef
   ){
     this.quotes = [];
+    this.races = [];
   }
 
   ngOnInit(){
@@ -33,6 +38,16 @@ export class ExplorerComponent {
       this.quotes = q;
       this.refreshData();
     });
+
+    this.raceService.Races$.subscribe(r =>
+    {
+      this.races = r;
+      this.refreshData();
+    });
+  }
+
+  public requestUserData(event: InputEvent): void{
+    this.raceService.fetchAllRaces(event.data);
   }
 
   public refreshData(): void{
