@@ -2,22 +2,31 @@
   <div class="row">
     <div class="col-2">
       <h3>Settings</h3>
-      <select (change)="refreshData()" [(ngModel)]="ranked_filter_option" class="form-select mb-2">
+      <select (change)="refreshData()" [(ngModel)]="ranked_filter" class="form-select mb-2">
         <option value="ranked">Ranked</option>
         <option value="unranked">Unranked</option>
         <option value="all">All</option>
       </select>
       <input type="text" (change)="requestUserData($event)" placeholder="Username" class="form-control mb-2" />
-      <select (change)="refreshData()" [(ngModel)]="user_filter_option" class="form-select mb-2">
+      <select (change)="refreshData()" [(ngModel)]="user_filter" class="form-select mb-2">
         <option value="all">All</option>
         <option value="played">Played</option>
         <option value="unplayed">Unplayed</option>
+      </select>
+      <select (change)="refreshData()" [(ngModel)]="masochist_filter" class="form-select mb-2">
+        <option value="all">Show all</option>
+        <option value="show">Masochist only</option>
+        <option value="hide">Hide masochist</option>
       </select>
 
       <h3>How to use?</h3>
       <b>Hover: </b><p>Display information about the quote</p>
       <b>Left click: </b><p>(Un)mark the point in red</p>
       <b>Right click: </b><p>Navigate to the quote</p>
+
+      <h3>Information</h3>
+      <b>Maso: </b><p>This is the masochist mode added by <a href="https://docs.google.com/spreadsheets/d/18v_tTMculuh1X13-ciQxVPi1jJ7H5LXHww1YvhD8V9k/edit?gid=1724133057#gid=1724133057">qoiauve.</a></p>
+
     </div>
     <div class="col-8 d-flex justify-content-center">
       <div class="container">

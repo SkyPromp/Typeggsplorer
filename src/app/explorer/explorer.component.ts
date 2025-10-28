@@ -19,8 +19,10 @@ export class ExplorerComponent {
   private margin = { top: 40, right: -10, bottom: 40, left: 40 };
   private width = 600 - this.margin.left - this.margin.right;
   private height = 400 - this.margin.top - this.margin.bottom;
-  public ranked_filter_option: string = "ranked";
-  public user_filter_option: string = "all";
+  public ranked_filter: string = "ranked";
+  public user_filter: string = "all";
+  public masochist_filter: string = "all";
+  public masochistIds: Set<string>;
 
   constructor(
     private quoteService: QuoteService,
@@ -29,6 +31,8 @@ export class ExplorerComponent {
   ){
     this.quotes = [];
     this.raceIds = new Set();
+    this.masochistIds = new Set();
+    this.loadMasochistIds();
   }
 
   ngOnInit(){
@@ -52,20 +56,25 @@ export class ExplorerComponent {
   }
 
   public refreshData(): void{
-    console.log(`rerender graph: ${this.ranked_filter_option}`);
+    console.log(`rerender graph: ${this.ranked_filter}`);
     console.log(this.raceIds);
 
     this.ResetSvg();
     this.drawScatterPlot(this.quotes
       .filter((quote: IQuote) =>
-        ((this.ranked_filter_option == "ranked") && quote.ranked) ||
-        (this.ranked_filter_option == "unranked") && (!quote.ranked) ||
-        (this.ranked_filter_option != "ranked" && this.ranked_filter_option != "unranked")
+        ((this.ranked_filter == "ranked") && quote.ranked) ||
+        (this.ranked_filter == "unranked") && (!quote.ranked) ||
+        (this.ranked_filter != "ranked" && this.ranked_filter != "unranked")
       )
       .filter((quote: IQuote) =>
-        ((this.user_filter_option == "played") && this.raceIds.has(quote.quoteId)) ||
-        (this.user_filter_option == "unplayed") && !this.raceIds.has(quote.quoteId) ||
-        (this.user_filter_option != "played" && this.user_filter_option != "unplayed")
+        ((this.user_filter == "played") && this.raceIds.has(quote.quoteId)) ||
+        (this.user_filter == "unplayed") && !this.raceIds.has(quote.quoteId) ||
+        (this.user_filter != "played" && this.user_filter != "unplayed")
+      )
+      .filter((quote: IQuote) =>
+        ((this.masochist_filter == "show") && this.masochistIds.has(quote.quoteId)) ||
+        (this.masochist_filter == "hide") && !this.masochistIds.has(quote.quoteId) ||
+        (this.masochist_filter != "show" && this.masochist_filter != "hide")
       )
       .map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
   }
@@ -213,5 +222,11 @@ export class ExplorerComponent {
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text(text);
+  }
+
+  private loadMasochistIds(){
+  this.masochistIds = new Set(
+      ["'tnight_6190", "fiofyww_3003", "oasanaa_8555", "tuchotc_8080", "tn_1141 ", "agaacad_6131 ", "c2sca&g_4101 ", "%22itmsr%22_4378 ", "%7C__%7C_%7C%7C_0969", "56528;;_2005", "ltbkoaj_8262", "tipdiac_0197", "fcapasp_3101", "l_2740", "tcwctrt_1633", "d=pv-uv_2129", "rbyogyo_1135", "a-aaa-a_7900", "itssddy_1646", "'hghghh_3155", "fiitfcc_8185", "-gcbv3g_3655", "ddddddd_0044", "cdrea-a_7235", "aiottpi_8417", "toniea__4834", "psa12zj_8889", "%22coahby_6569", "lobfnfl_9914", "cicbdit_0404", "tsoaafo_1609", "tasmojt_8685", "%22itmsr%22_9511", "paasoac_6945", "hfiiacw_5103", "ttotkfb_7833", "tf(oaow_5127", "lylahhw_3157", "thorsbc_2466", "'apipuo_5748", "a5mjdpa_6632", "noog!gg_3476", "(c=c+c2_3379", "wtngamn_7486", "vivahvv_4965", "potumcf_3047", "1btssov_5424", "nttgewo_5373", "atcpwtv_4784", "dmem(mf_6934", "tvareot_4971", "eyvgtqy_2644", "3ttaa1p_1517", "ycnqptb_9823", "tfgostc_0544", "bi2jyod_5871", "tptwgfa_4935", "atwmots_9726", "(+(+(+(_8548", "hptqmme_4489", "cptptpa_6337", "atcmcbo_7232", "14(weap_6404", "tuawpoa_7911", "oipbnot_2900", "enifnim_7344", "k=s+s+s_8285", "fkkit3s_9160", "n91gbbe_6825", "hdysdwt_4310", "tscysui_4765", "tijgnjl_6472", "whszozm_7325", "ew(%7Bcnu_2238", "twhotaa_9101", "utmbsaf_2616", "%22wt%22nmj_9236", "tmmbiss_9299", "ticctwa_7803", "1[amo2d_0959", "thpafap_6071", "ipeb[hh_4088", "oids1gl_8078", "tskbmmg_9408", "31lgton_0939", "vsssbtt_2313", "iwapttt_2522", "tfwqtma_7265", "aatsots_0224", "wmdaiws_7610", "%22p1xkhi_8539", "11poino_0310", "tsaltia_0405", "hyhoohd_7757", "tfeeomf_1374", "%22usnyhd_0388", "dueufee_5636"]
+    );
   }
 }
