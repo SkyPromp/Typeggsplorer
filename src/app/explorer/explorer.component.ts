@@ -52,29 +52,40 @@ export class ExplorerComponent {
   }
 
   public requestUserData(event: Event): void{
-    this.raceService.fetchAllRaces((event.target as HTMLInputElement).value);
+    const username: string = (event.target as HTMLInputElement).value;
+
+    if (!username) {
+      this.user_filter = "all";
+      this.raceIds.clear();
+      this.refreshData();
+      return;
+    }
+
+    this.raceService.fetchAllRaces(username);
   }
 
   public refreshData(): void{
-    console.log(`rerender graph: ${this.ranked_filter}`);
-    console.log(this.raceIds);
-
     this.ResetSvg();
     this.drawScatterPlot(this.quotes
       .filter((quote: IQuote) =>
-        ((this.ranked_filter == "ranked") && quote.ranked) ||
-        (this.ranked_filter == "unranked") && (!quote.ranked) ||
-        (this.ranked_filter != "ranked" && this.ranked_filter != "unranked")
-      )
-      .filter((quote: IQuote) =>
-        ((this.user_filter == "played") && this.raceIds.has(quote.quoteId)) ||
-        (this.user_filter == "unplayed") && !this.raceIds.has(quote.quoteId) ||
-        (this.user_filter != "played" && this.user_filter != "unplayed")
-      )
-      .filter((quote: IQuote) =>
-        ((this.masochist_filter == "show") && this.masochistIds.has(quote.quoteId)) ||
-        (this.masochist_filter == "hide") && !this.masochistIds.has(quote.quoteId) ||
-        (this.masochist_filter != "show" && this.masochist_filter != "hide")
+      {
+        const ranked: boolean =
+          ((this.ranked_filter == "ranked") && quote.ranked) ||
+          (this.ranked_filter == "unranked") && (!quote.ranked) ||
+          (this.ranked_filter != "ranked" && this.ranked_filter != "unranked");
+
+        const played: boolean =
+          ((this.user_filter == "played") && this.raceIds.has(quote.quoteId)) ||
+          (this.user_filter == "unplayed") && !this.raceIds.has(quote.quoteId) ||
+          (this.user_filter != "played" && this.user_filter != "unplayed");
+
+        const masochist: boolean =
+          ((this.masochist_filter == "show") && this.masochistIds.has(quote.quoteId)) ||
+          (this.masochist_filter == "hide") && !this.masochistIds.has(quote.quoteId) ||
+          (this.masochist_filter != "show" && this.masochist_filter != "hide");
+
+          return ranked && played && masochist;
+        }
       )
       .map((quote: IQuote) => {return {x: quote.text.length, y: quote.difficulty, id: quote.quoteId, text: quote.text};}));
   }

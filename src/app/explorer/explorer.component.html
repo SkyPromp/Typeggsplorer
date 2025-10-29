@@ -7,12 +7,14 @@
         <option value="unranked">Unranked</option>
         <option value="all">All</option>
       </select>
-      <input type="text" (change)="requestUserData($event)" placeholder="Username" class="form-control mb-2" />
-      <select (change)="refreshData()" [(ngModel)]="user_filter" class="form-select mb-2">
-        <option value="all">All</option>
-        <option value="played">Played</option>
-        <option value="unplayed">Unplayed</option>
-      </select>
+      <input #username type="text" (change)="requestUserData($event)" placeholder="Username" class="form-control mb-2" />
+      @if(username.value){
+        <select (change)="refreshData()" [(ngModel)]="user_filter" class="form-select mb-2">
+          <option value="all">All</option>
+          <option value="played">Played</option>
+          <option value="unplayed">Unplayed</option>
+        </select>
+      }
       <select (change)="refreshData()" [(ngModel)]="masochist_filter" class="form-select mb-2">
         <option value="all">Show all</option>
         <option value="show">Masochist only</option>
