@@ -21,6 +21,18 @@
         <option value="hide">Hide masochist</option>
       </select>
 
+      <button (click)="refreshData()" class="btn btn-primary">Reload</button>
+      <br>
+      <b>Quotes left: </b><p>{{ quotesLeft }}</p>
+
+      @if(quotesLoaded.toLoad){
+        <b>Quotes loaded: </b><p>{{ getProgressPercent(quotesLoaded) }}%</p>
+      }
+
+      @if(racesLoaded.toLoad){
+        <b>Races loaded: </b><p>{{ getProgressPercent(racesLoaded) }}%</p>
+      }
+
       <h3>How to use?</h3>
       <b>Hover: </b><p>Display information about the quote</p>
       <b>Left click: </b><p>(Un)mark the point in red</p>
